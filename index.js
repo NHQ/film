@@ -1,20 +1,32 @@
 require('./reqFrame')
+var emitter = require('events').EventEmitter
 
 navigator.getUserMedia = (navigator.getUserMedia || 
                         navigator.webkitGetUserMedia ||
                         navigator.mozGetUserMedia ||
                         navigator.msGetUserMedia);
 
-
-
+if(!navigator.getUserMedia){
+    alert('no webcam or no getUserMedia support detected.  Try Using Chome')
+}
 
 module.exports = function(video, film, mirror){
 	
 	navigator.getUserMedia({audio: true, video: true}, function(stream){
 	    video.src = window.URL.createObjectURL(stream)
+	}, function(err){
+	    alert('no webcam or no getUserMedia support detected.  Try Using Chome')
 	})
 	
-	return {snapShot: snapShot, record: record, expose: expose}
+	var app = new emitter();
+	app.snapShot = snapShot;
+	app.record = record;
+	app.expose = expose;
+
+    var recording = false;
+	var frames = [];
+	
+	return app // {snapShot: snapShot, record: record, expose: expose}
 	
 	function getTime(){
 	    var t
@@ -27,20 +39,40 @@ module.exports = function(video, film, mirror){
 	}
 	
 	function snapShot(){
-    	render = film.getContext('2d')
-    	render.drawImage(video, 0, 0)
-    	    
+    	var reflection = mirror.getContext('2d');
+    	reflection.drawImage(video, 0, 0);
+	    var p = reflection.getImageData(0, 0, mirror.width, mirror.height)
+        app.emit('expose', p)
 	}
 
     function record(){
-        window.requestAnimationFrame(animate)		
+        if(recording){
+            app.emit('record', frames)
+            recording = false
+        }
+        recording = true;
+        frames = [];
+        var reflection = mirror.getContext('2d');
+        window.requestAnimationFrame(rec)		
+    	
+        function rec(time){
+        	window.requestAnimationFrame(rec)
+        	reflection.drawImage(video, 0, 0)
+    	    var frame = reflection.getImageData(0, 0, mirror.width, mirror.height)
+    	    frames.push(frame)
+    	}
+    	
     }
     
     function expose(params){
         
         var defaults = {
-            shutterSpeed: 1000 / 60,
-            filmSpeed: 5,
+            shutterSpeed: 1000 / 24,
+            filmSpeed: {
+                r: 5,
+                g: 5,
+                b: 5
+            },
             r: 0,
             g: 0,
             b: 0,
@@ -50,20 +82,28 @@ module.exports = function(video, film, mirror){
         if(!params){
             params = defaults
         }
+        
         else {
-            for (var attrname in defaults) { 
+            for (var attrname in defaults) {
+                if(typeof params.filmSpeed == 'number'){
+                    var n = params.filmSpeed;
+                    params.filmSpeed = {
+                        r: n,
+                        g: n,
+                        b: n
+                    }
+                }
                 if(!params[attrname]) params[attrname] = defaults[attrname]
             }
         }
-
+        console.log(params)
         var d = 0;
-        var render = film.getContext('2d')
     	var reflection = mirror.getContext('2d')
 
-    	var positive = render.getImageData(0,0,film.width, film.height)
-        var positive = new Uint8ClampedArray(positive.data.length)
+    	var positive = reflection.getImageData(0,0,mirror.width, mirror.height)
+        positive = new Uint8ClampedArray(positive.data.length)
 
-    	for(var m = 0; m < film.width * film.height; m++){
+    	for(var m = 0; m < mirror.width * mirror.height; m++){
     	    var index = m * 4;
     	    positive[index] = params.r;
     	    positive[index + 1] = params.g;
@@ -78,9 +118,9 @@ module.exports = function(video, film, mirror){
     	
         function f(time){
         	if(time > d) {
-        	    var p = render.getImageData(0,0,mirror.width, mirror.height)
-                 p.data.set(positive)
-        	    render.putImageData(p, 0, 0)
+        	    var p = reflection.getImageData(0,0,mirror.width, mirror.height)
+                p.data.set(positive)
+                app.emit('expose', p)
         	    window.cancelAnimationFrame(f)
     	        return
     	    }
@@ -89,17 +129,16 @@ module.exports = function(video, film, mirror){
         	var negative = reflection.getImageData(0,0,mirror.width,mirror.height);  
                 for(n=0; n<negative.width*negative.height; n++) {  
                     var index = n*4;   
-                    positive[index+0] =  positive[index+0] + (negative.data[index] / params.filmSpeed)
-                    positive[index+1] =  positive[index+1] + (negative.data[index+1] / params.filmSpeed)
-                    positive[index+2] =  positive[index+2] + (negative.data[index+2] / params.filmSpeed)  
+                    positive[index+0] =  positive[index+0] + (negative.data[index] / params.filmSpeed.r)
+                    positive[index+1] =  positive[index+1] + (negative.data[index+1] / params.filmSpeed.g)
+                    positive[index+2] =  positive[index+2] + (negative.data[index+2] / params.filmSpeed.b)  
                 }
-//        	pos.data = positive
         }
     }
     
     function animate(time){
     	window.requestAnimationFrame(animate)
-    	render = film.getContext('2d')
+    	render = mirror.getContext('2d')
     	render.drawImage(video, 0, 0)	
 	}    
 	

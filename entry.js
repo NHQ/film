@@ -6,14 +6,36 @@ var mirror = document.getElementById('mirror')
 
 var controller = camera(videoEl, film, mirror)
 
+controller.on('expose', function(data){
+    var render = film.getContext('2d')
+    render.putImageData(data, 0, 0)
+    
+})
+
+controller.on('snapshot', function(data){
+    var render = film.getContext('2d')
+    render.putImageData(data, 0, 0)
+})
+
+controller.on('record', function(data){
+    console.log(data.length)
+})
+
 //controller.record()
 
-//setInterval(snapChat, 1000)
+setTimeout(function(){
+ //   controller.record()
+}, 5000)
 
 setInterval(function(){
-    controller.expose({shutterSpeed: 2000})
+    controller.expose({shutterSpeed: 2000, filmSpeed:{
+        r: 7,
+        g: 11,
+        b: 2
+    }})
 }, 3000)
 
-function snapChat(){
-    controller.snapShot()
-}
+setInterval(function(){
+   // controller.snapShot({shutterSpeed: 2000})
+}, 500)
+

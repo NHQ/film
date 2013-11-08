@@ -1,0 +1,20 @@
+{
+  "name": "film",
+  "version": "0.2.0",
+  "description": "module for browser webcam/mic ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:NHQ/film.git"
+  },
+  "keywords": [
+    "webcam",
+    "getUserMedia",
+    "film"
+  ],
+  "author": "http://johnnyscript.us",
+  "license": "MIT"
+}
