@@ -4,7 +4,7 @@ var videoEl = document.getElementById('source')
 var film = document.getElementById('film')
 var mirror = document.getElementById('mirror')
 
-var controller = camera(videoEl, film, mirror)
+var controller = camera(videoEl, mirror)
 
 controller.on('expose', function(data){
     var render = film.getContext('2d')

@@ -10,7 +10,7 @@ var film = require('film');
 var camera = film(videoElement, canvasElement)
 ```
 
-The constructor returns a few methods, and is an event emitter.
+The constructor returns an event emitter with methods
 
 ##Methods and Events
 
@@ -47,11 +47,12 @@ var params = {
   b: 0, // which will boost that color value in the exposure
   a: 255 // values must be between 0-255
 }
+```
 
 ###filmSpeed
 
-This param mimics film speed, which is sort of a density/resistance value.
-Faster film speed saturates faster.  With actual film, the higher the number, the faster the film.
+This parameter mimics film speed, which is sort of a density/resistance value.
+Faster film speed saturates quicker.  With actual film, the higher the number, the faster the film.
 This module builds up an exposure over time, dividing rgb values by the filmSpeed value.
 Ergo, with this parameter, the lower the value, the faster the film. 
 

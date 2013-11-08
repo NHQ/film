@@ -10,7 +10,7 @@ if(!navigator.getUserMedia){
     alert('no webcam or no getUserMedia support detected.  Try Using Chome')
 }
 
-module.exports = function(video, film, mirror){
+module.exports = function(video, mirror){
 	
 	navigator.getUserMedia({audio: true, video: true}, function(stream){
 	    video.src = window.URL.createObjectURL(stream)
@@ -96,7 +96,6 @@ module.exports = function(video, film, mirror){
                 if(!params[attrname]) params[attrname] = defaults[attrname]
             }
         }
-        console.log(params)
         var d = 0;
     	var reflection = mirror.getContext('2d')
 
