@@ -2,6 +2,8 @@
 
 A webcam module with a few features.
 
+NOTE: this module will handle the getUserMedia stream, and apply it to your video element. See:
+
 ##Usage
 
 ```js
