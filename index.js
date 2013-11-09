@@ -42,7 +42,7 @@ module.exports = function(video, mirror){
     	var reflection = mirror.getContext('2d');
     	reflection.drawImage(video, 0, 0);
 	    var p = reflection.getImageData(0, 0, mirror.width, mirror.height)
-        app.emit('expose', p)
+        app.emit('snapshot', p)
 	}
 
     function record(){

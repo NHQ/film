@@ -27,6 +27,7 @@ setTimeout(function(){
  //   controller.record()
 }, 5000)
 
+/*
 setInterval(function(){
     controller.expose({shutterSpeed: 2000, filmSpeed:{
         r: 7,
@@ -34,8 +35,8 @@ setInterval(function(){
         b: 2
     }})
 }, 3000)
-
+*/
 setInterval(function(){
-   // controller.snapShot({shutterSpeed: 2000})
-}, 500)
+    controller.snapShot({shutterSpeed: 2000})
+}, 5000)
 
