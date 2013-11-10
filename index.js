@@ -71,7 +71,7 @@ module.exports = function(stream, video, mirror, film){
         if(!params){
             params = defaults
         }
-        
+            	
         else {
             for (var attrname in defaults) {
                 if(typeof params.filmSpeed == 'number'){
@@ -82,24 +82,31 @@ module.exports = function(stream, video, mirror, film){
                         b: n
                     }
                 }
-                if(!params[attrname]) params[attrname] = defaults[attrname]
+                if(!params[attrname] && params[attrname] != 0) params[attrname] = defaults[attrname]
             }
         }
+        console.log(params)
         var d = 0;
     	var reflection = mirror.getContext('2d')
     	var render = film.getContext('2d')
 
     	var pos = render.getImageData(0,0,film.width, film.height)
-        var positive = new Uint8ClampedArray(pos.data.length)
+        
+        if(params.blob){
+            var positive = params.blob           
+        }
+        else{
+            var positive = new Uint8ClampedArray(pos.data.length)
 
-    	for(var m = 0; m < mirror.width * mirror.height; m++){
-    	    var index = m * 4;
-    	    positive[index] = params.r;
-    	    positive[index + 1] = params.g;
-            positive[index + 2] = params.b;
-            positive[index + 3] = params.a
-    	}
-
+        	for(var m = 0; m < mirror.width * mirror.height; m++){
+        	    var index = m * 4;
+        	    positive[index] = params.r;
+        	    positive[index + 1] = params.g;
+                positive[index + 2] = params.b;
+                positive[index + 3] = params.a
+        	}   
+        }
+        
     	window.requestAnimationFrame(function(time){
     	    d = time + params.shutterSpeed
     	    window.requestAnimationFrame(f)
@@ -118,9 +125,10 @@ module.exports = function(stream, video, mirror, film){
         	var negative = reflection.getImageData(0,0,mirror.width,mirror.height);  
                 for(n=0; n<negative.width*negative.height; n++) {  
                     var index = n*4;   
-                    positive[index+0] =  vert(positive[index+0], (negative.data[index] / params.filmSpeed.r))
-                    positive[index+1] =  vert(positive[index+1], (negative.data[index+1] / params.filmSpeed.g))
-                    positive[index+2] =  vert(positive[index+2], (negative.data[index+2] / params.filmSpeed.b))
+                    positive[index+0] =  vert(positive[index+0], (negative.data[index] / params.filmSpeed.r));
+                    positive[index+1] =  vert(positive[index+1], (negative.data[index+1] / params.filmSpeed.g));
+                    positive[index+2] =  vert(positive[index+2], (negative.data[index+2] / params.filmSpeed.b));
+                    positive[index + 3] = params.a;
                 }
     //        pos.data.set(positive)
       //      render.putImageData(pos, 0, 0)
