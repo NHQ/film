@@ -16,10 +16,29 @@ body, div, p, input, select, form, img, video, audio, h1, h2, h3, h4{
 ::-webkit-input-placeholder{
     font-weight:900;
 }
-
+canvas, video{
+    float:left;
+}
 div{
     margin:0px;
     padding:0px;  
+}
+
+.knob{
+    background:yellow;
+    border:2px solid OrangeRed;
+    width:200px;
+    height:200px;
+}
+
+#knob2{
+    position:absolute;
+    right:0;
+    top:300px;
+    background:yellow;
+    border:2px solid OrangeRed;
+    width:200px;
+    height:200px;
 }
 
 textarea {

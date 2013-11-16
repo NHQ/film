@@ -14,17 +14,7 @@ module.exports = function(stream, video, mirror, film){
     var recording = false;
 	var frames = [];
 	
-	return app // {snapShot: snapShot, record: record, expose: expose}
-	
-	function getTime(){
-	    var t
-	    
-	    return
-	    
-	    window.requestAnimationFrame(timer)
-	    
-	    function timer(time){t = time}
-	}
+	return app 
 	
 	function snapShot(){
     	var reflection = mirror.getContext('2d');
@@ -85,7 +75,6 @@ module.exports = function(stream, video, mirror, film){
                 if(!params[attrname] && params[attrname] != 0) params[attrname] = defaults[attrname]
             }
         }
-        console.log(params)
         var d = 0;
     	var reflection = mirror.getContext('2d')
     	var render = film.getContext('2d')
